@@ -15,11 +15,7 @@ void ATopDownShmupPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	// keep updating the destination every tick while desired
-	if (bMoveToMouseCursor)
-	{
-		MoveToMouseCursor();
-	}
+	UpdateMouseLook();
 }
 
 void ATopDownShmupPlayerController::SetupInputComponent()
@@ -29,6 +25,8 @@ void ATopDownShmupPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ATopDownShmupPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &ATopDownShmupPlayerController::OnSetDestinationReleased);
+	InputComponent->BindAxis("MoveForward", this, &ATopDownShmupPlayerController::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &ATopDownShmupPlayerController::MoveRight);
 
 	// support touch devices 
 	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ATopDownShmupPlayerController::MoveToTouchLocation);
@@ -45,6 +43,50 @@ void ATopDownShmupPlayerController::MoveToMouseCursor()
 	{
 		// We hit something, move there
 		SetNewMoveDestination(Hit.ImpactPoint);
+	}
+}
+
+void ATopDownShmupPlayerController::MoveForward(float Value)
+{
+	if (Value != 0.0f)
+	{
+		APawn* const Pawn = GetPawn();
+		if (Pawn)
+		{
+			Pawn->AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+		}
+	}
+}
+
+void ATopDownShmupPlayerController::MoveRight(float Value)
+{
+	if (Value != 0.0f)
+	{
+		APawn* const Pawn = GetPawn();
+		if (Pawn)
+		{
+			Pawn->AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
+		}
+	}
+}
+
+void ATopDownShmupPlayerController::UpdateMouseLook()
+{
+	APawn* const Pawn = GetPawn();
+	if (Pawn)
+	{
+		// Trace to see what is under the mouse cursor
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+		if (Hit.bBlockingHit)
+		{
+			// We hit something, face it
+			FVector FaceDirection = Hit.ImpactPoint - Pawn->GetActorLocation();
+			FaceDirection.Z = 0.0f;
+			FaceDirection.Normalize();
+			Pawn->SetActorRotation(FaceDirection.Rotation());
+		}
 	}
 }
 

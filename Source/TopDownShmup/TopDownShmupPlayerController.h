@@ -23,6 +23,13 @@ protected:
 	/** Navigate player to the current mouse cursor location. */
 	void MoveToMouseCursor();
 
+	/** Navigate player using WASD */
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+
+	/** Have player face mouse location */
+	void UpdateMouseLook();
+
 	/** Navigate player to the current touch location. */
 	void MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location);
 	
