@@ -3,6 +3,7 @@
 #include "TopDownShmupPlayerController.h"
 #include "TopDownShmup.h"
 #include "AI/NavigationSystemBase.h"
+#include "TopDownShmupCharacter.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 
 ATopDownShmupPlayerController::ATopDownShmupPlayerController()
@@ -23,27 +24,10 @@ void ATopDownShmupPlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &ATopDownShmupPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &ATopDownShmupPlayerController::OnSetDestinationReleased);
+	InputComponent->BindAction("Fire", IE_Pressed, this, &ATopDownShmupPlayerController::OnStartFire);
+	InputComponent->BindAction("Fire", IE_Released, this, &ATopDownShmupPlayerController::OnStopFire);
 	InputComponent->BindAxis("MoveForward", this, &ATopDownShmupPlayerController::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &ATopDownShmupPlayerController::MoveRight);
-
-	// support touch devices 
-	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &ATopDownShmupPlayerController::MoveToTouchLocation);
-	InputComponent->BindTouch(EInputEvent::IE_Repeat, this, &ATopDownShmupPlayerController::MoveToTouchLocation);
-}
-
-void ATopDownShmupPlayerController::MoveToMouseCursor()
-{
-	// Trace to see what is under the mouse cursor
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-	if (Hit.bBlockingHit)
-	{
-		// We hit something, move there
-		SetNewMoveDestination(Hit.ImpactPoint);
-	}
 }
 
 void ATopDownShmupPlayerController::MoveForward(float Value)
@@ -90,47 +74,20 @@ void ATopDownShmupPlayerController::UpdateMouseLook()
 	}
 }
 
-void ATopDownShmupPlayerController::MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location)
+void ATopDownShmupPlayerController::OnStartFire()
 {
-	FVector2D ScreenSpaceLocation(Location);
-
-	// Trace to see what is under the touch location
-	FHitResult HitResult;
-	GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
-	if (HitResult.bBlockingHit)
+	ATopDownShmupCharacter* const PlayerCharacter = Cast<ATopDownShmupCharacter>(GetPawn());
+	if (PlayerCharacter)
 	{
-		// We hit something, move there
-		SetNewMoveDestination(HitResult.ImpactPoint);
+		PlayerCharacter->OnStartFire();
 	}
 }
 
-void ATopDownShmupPlayerController::SetNewMoveDestination(const FVector DestLocation)
+void ATopDownShmupPlayerController::OnStopFire()
 {
-	APawn* const Pawn = GetPawn();
-	if (Pawn)
+	ATopDownShmupCharacter* const PlayerCharacter = Cast<ATopDownShmupCharacter>(GetPawn());
+	if (PlayerCharacter)
 	{
-		UNavigationSystemBase* const NavSys = GetWorld()->GetNavigationSystem();
-        
-        //
-		float const Distance = FVector::Dist(DestLocation, Pawn->GetActorLocation());
-
-		// We need to issue move command only if far enough in order for walk animation to play correctly
-		if (NavSys && (Distance > 120.0f))
-		{
-			UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, DestLocation);
-            //NavSys->SimpleMoveToLocation(this, DestLocation);
-		}
+		PlayerCharacter->OnStopFire();
 	}
-}
-
-void ATopDownShmupPlayerController::OnSetDestinationPressed()
-{
-	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
-}
-
-void ATopDownShmupPlayerController::OnSetDestinationReleased()
-{
-	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
 }
