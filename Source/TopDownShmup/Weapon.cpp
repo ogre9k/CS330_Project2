@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Weapon.h"
+#include "ParticleHelper.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+
 // Sets default values
 AWeapon::AWeapon()
 {
@@ -29,6 +33,7 @@ void AWeapon::OnStartFire()
 {
 	FireAC = PlayWeaponSound(FireLoopSound);
 	FireAC->Play();
+	FirePSC = UGameplayStatics::SpawnEmitterAttached(MuzzleFX, RootComponent, TEXT("MuzzleFlashSocket"));
 }
 
 void AWeapon::OnStopFire()
@@ -36,6 +41,7 @@ void AWeapon::OnStopFire()
 	if (FireAC) {
 		FireAC->Stop();
 		PlayWeaponSound(FireFinishSound)->Play();
+		FirePSC->DeactivateSystem();
 	}
 }
 

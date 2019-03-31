@@ -32,6 +32,9 @@ protected:
 
 	UAudioComponent* PlayWeaponSound(USoundCue*);
 
+	UPROPERTY(Transient)
+	UParticleSystemComponent* FirePSC;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -40,4 +43,7 @@ public:
 	USoundCue* FireLoopSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	USoundCue* FireFinishSound;
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UParticleSystem* MuzzleFX;
+	APawn * MyPawn;
 };

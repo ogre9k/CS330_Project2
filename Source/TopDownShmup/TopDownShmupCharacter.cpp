@@ -29,6 +29,7 @@ void ATopDownShmupCharacter::BeginPlay()
 				// This is attached to "WeaponPoint" which is defined in the skeleton
 				// NOTE: This should probably be a blueprint parameter
 				MyWeapon->WeaponMesh->AttachTo(GetMesh(), TEXT("WeaponPoint"));
+				MyWeapon->MyPawn = this;
 			}
 		}
 	}
