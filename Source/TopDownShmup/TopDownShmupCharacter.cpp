@@ -2,7 +2,7 @@
 
 #include "TopDownShmupCharacter.h"
 #include "TopDownShmup.h"
-
+#include "AssaultWeapon.h"
 void ATopDownShmupCharacter::BeginPlay()
 {
 	// Call base class BeginPlay

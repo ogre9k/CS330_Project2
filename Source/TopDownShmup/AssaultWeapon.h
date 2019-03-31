@@ -17,18 +17,14 @@ class TOPDOWNSHMUP_API AAssaultWeapon : public AWeapon
 public:
 	AAssaultWeapon();
 	
-	void OnStartFire();
-	void OnStopFire();
+	virtual void OnStartFire();
+	virtual void OnStopFire();
 	
 protected:
 
-	UPROPERTY(EditAnywhere, Category="Weapon Stats")
-	float FireRate;
-	UPROPERTY(EditAnywhere, Category="Weapon Stats")
-	float WeaponRange;
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Stats")
 	UParticleSystem* HitEffects;
-
+	FTimerHandle FireTimer;
 	void WeaponTrace();
 
 public:

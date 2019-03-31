@@ -5,17 +5,19 @@
 AAssaultWeapon::AAssaultWeapon()
 {
 	FireRate = 0.05f;
-	WeaponRange = 10000.0f;
+	WeaponRange = 1000.0f;
 }
 
 void AAssaultWeapon::OnStartFire()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ran trace"));
+	GetWorldTimerManager().SetTimer(FireTimer, this, &AAssaultWeapon::WeaponTrace, FireRate, true, 0.0f);
 	Super::OnStartFire();
-
 }
 
 void AAssaultWeapon::OnStopFire()
 {
+	GetWorldTimerManager().ClearTimer(FireTimer);
 	Super::OnStopFire();
 
 }
@@ -32,7 +34,7 @@ void AAssaultWeapon::WeaponTrace()
 	FVector Forward = MyPawn->GetActorForwardVector();
 
 	// Calculate end position
-	FVector EndPos = (StartPos + Forward) * WeaponRange;
+	FVector EndPos = StartPos + (Forward * WeaponRange);
 
 	// Perform trace to retrieve hit info
 	FCollisionQueryParams TraceParams(WeaponFireTag, true, Instigator);
@@ -52,5 +54,6 @@ void AAssaultWeapon::WeaponTrace()
 		// what values are "defaulted" if not specified as parameters. I had this issue previously as
 		// well with the SpawnEmitterAttached function in the AWeapon class.
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffects, FVector(Hit.Location.X, Hit.Location.Y, Hit.Location.Z));
+		UE_LOG(LogTemp, Warning, TEXT("TraceHit"));
 	}
 }

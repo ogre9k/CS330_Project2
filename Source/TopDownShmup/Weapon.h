@@ -18,8 +18,8 @@ public:
 	// Sets default values for this actor's properties
 	AWeapon();
 
-	void OnStartFire();
-	void OnStopFire();
+	virtual void OnStartFire();
+	virtual void OnStopFire();
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	USkeletalMeshComponent* WeaponMesh;
 
@@ -45,5 +45,9 @@ public:
 	USoundCue* FireFinishSound;
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* MuzzleFX;
+	UPROPERTY(EditAnywhere, Category = "Weapon Stats")
+	float FireRate;
+	UPROPERTY(EditAnywhere, Category = "Weapon Stats")
+	float WeaponRange;
 	APawn * MyPawn;
 };
