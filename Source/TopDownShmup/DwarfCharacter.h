@@ -16,4 +16,25 @@ class TOPDOWNSHMUP_API ADwarfCharacter : public AEnemyCharacter
 
 public:
 	ADwarfCharacter();
+	void StartAttack();
+	void StopAttack();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UAnimMontage* AttackAnim;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UAnimMontage* DeathAnim;
+
+	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent,
+		AController* EventInstigator, AActor* DamageCauser);
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float HP;
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float DMG;
+	FTimerHandle DeathTimer;
+	FTimerHandle AttackTimer;
+
+	void DamagePlayer();
+	void Kill();
 };

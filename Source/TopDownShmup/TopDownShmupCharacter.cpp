@@ -38,6 +38,8 @@ void ATopDownShmupCharacter::BeginPlay()
 
 ATopDownShmupCharacter::ATopDownShmupCharacter()
 {
+	HP = 100;
+
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -75,4 +77,30 @@ void ATopDownShmupCharacter::OnStartFire()
 void ATopDownShmupCharacter::OnStopFire()
 {
 	MyWeapon->OnStopFire();
+}
+
+float ATopDownShmupCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	HP -= Damage;
+	if (HP <= 0)
+	{
+		float DeathCountdown = PlayAnimMontage(DeathAnim) - 0.25f;
+		GetWorldTimerManager().SetTimer(DeathTimer, this, &ATopDownShmupCharacter::Die, DeathCountdown, false, DeathCountdown);
+		GetController()->SetIgnoreLookInput(true);
+		GetController()->SetIgnoreMoveInput(true);
+
+	}
+
+	return ActualDamage;
+}
+
+void ATopDownShmupCharacter::Die()
+{
+	GetMesh()->Deactivate();
+}
+
+bool ATopDownShmupCharacter::IsDead()
+{
+	return HP <= 0;
 }

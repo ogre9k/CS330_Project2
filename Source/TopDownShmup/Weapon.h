@@ -35,6 +35,9 @@ protected:
 	UPROPERTY(Transient)
 	UParticleSystemComponent* FirePSC;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float DMG;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

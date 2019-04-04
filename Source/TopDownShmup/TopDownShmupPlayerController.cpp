@@ -32,44 +32,53 @@ void ATopDownShmupPlayerController::SetupInputComponent()
 
 void ATopDownShmupPlayerController::MoveForward(float Value)
 {
-	if (Value != 0.0f)
+	if (!IsMoveInputIgnored()) 
 	{
-		APawn* const Pawn = GetPawn();
-		if (Pawn)
+		if (Value != 0.0f)
 		{
-			Pawn->AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+			APawn* const Pawn = GetPawn();
+			if (Pawn)
+			{
+				Pawn->AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+			}
 		}
 	}
 }
 
 void ATopDownShmupPlayerController::MoveRight(float Value)
 {
-	if (Value != 0.0f)
+	if (!IsMoveInputIgnored())
 	{
-		APawn* const Pawn = GetPawn();
-		if (Pawn)
+		if (Value != 0.0f)
 		{
-			Pawn->AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
+			APawn* const Pawn = GetPawn();
+			if (Pawn)
+			{
+				Pawn->AddMovementInput(FVector(0.0f, 1.0f, 0.0f), Value);
+			}
 		}
 	}
 }
 
 void ATopDownShmupPlayerController::UpdateMouseLook()
 {
-	APawn* const Pawn = GetPawn();
-	if (Pawn)
+	if (!IsLookInputIgnored()) 
 	{
-		// Trace to see what is under the mouse cursor
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-
-		if (Hit.bBlockingHit)
+		APawn* const Pawn = GetPawn();
+		if (Pawn)
 		{
-			// We hit something, face it
-			FVector FaceDirection = Hit.ImpactPoint - Pawn->GetActorLocation();
-			FaceDirection.Z = 0.0f;
-			FaceDirection.Normalize();
-			Pawn->SetActorRotation(FaceDirection.Rotation());
+			// Trace to see what is under the mouse cursor
+			FHitResult Hit;
+			GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+			if (Hit.bBlockingHit)
+			{
+				// We hit something, face it
+				FVector FaceDirection = Hit.ImpactPoint - Pawn->GetActorLocation();
+				FaceDirection.Z = 0.0f;
+				FaceDirection.Normalize();
+				Pawn->SetActorRotation(FaceDirection.Rotation());
+			}
 		}
 	}
 }
@@ -77,7 +86,7 @@ void ATopDownShmupPlayerController::UpdateMouseLook()
 void ATopDownShmupPlayerController::OnStartFire()
 {
 	ATopDownShmupCharacter* const PlayerCharacter = Cast<ATopDownShmupCharacter>(GetPawn());
-	if (PlayerCharacter)
+	if (PlayerCharacter && !PlayerCharacter->IsDead())
 	{
 		PlayerCharacter->OnStartFire();
 	}
@@ -86,7 +95,7 @@ void ATopDownShmupPlayerController::OnStartFire()
 void ATopDownShmupPlayerController::OnStopFire()
 {
 	ATopDownShmupCharacter* const PlayerCharacter = Cast<ATopDownShmupCharacter>(GetPawn());
-	if (PlayerCharacter)
+	if (PlayerCharacter && !PlayerCharacter->IsDead())
 	{
 		PlayerCharacter->OnStopFire();
 	}

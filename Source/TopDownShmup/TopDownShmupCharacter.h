@@ -22,13 +22,16 @@ class ATopDownShmupCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TSubclassOf<AWeapon> WeaponClass;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float HP;
+
 
 private:
 	AWeapon *MyWeapon;
 
 public:
 	ATopDownShmupCharacter();
-
+	bool IsDead();
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
 	/** Returns CameraBoom subobject **/
@@ -36,5 +39,13 @@ public:
 
 	void OnStartFire();
 	void OnStopFire();
+
+	float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser);
+	void Die();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Animation")
+	UAnimMontage* DeathAnim;
+
+	FTimerHandle DeathTimer;
 };
 

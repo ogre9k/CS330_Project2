@@ -17,20 +17,22 @@ void AAIDwarfController::BeginPlay()
 
 void AAIDwarfController::Tick(float DeltaTime)
 {
-	if (CurrentState == EAIDwarfState::EStart) 
+	if (MyDwarf)
 	{
-		SetCurrentState(EAIDwarfState::EChasePlayer);
-	}
-
-	if (CurrentState == EAIDwarfState::EAttackPlayer)
-	{
-		ATopDownShmupCharacter* PlayerCharacter = Cast<ATopDownShmupCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-		if (PlayerCharacter)
+		if (CurrentState == EAIDwarfState::EStart)
 		{
-			if (FVector::Dist(PlayerCharacter->GetActorLocation(), MyDwarf->GetActorLocation()) > Range)
+			SetCurrentState(EAIDwarfState::EChasePlayer);
+		}
+
+		else if (CurrentState == EAIDwarfState::EAttackPlayer)
+		{
+			ATopDownShmupCharacter* PlayerCharacter = Cast<ATopDownShmupCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+			if (PlayerCharacter)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), FVector::Dist(PlayerCharacter->GetActorLocation(), MyDwarf->GetActorLocation()));
-				SetCurrentState(EAIDwarfState::EChasePlayer);
+				if (FVector::Dist(PlayerCharacter->GetActorLocation(), MyDwarf->GetActorLocation()) > Range)
+				{
+					SetCurrentState(EAIDwarfState::EChasePlayer);
+				}
 			}
 		}
 	}
@@ -41,7 +43,6 @@ void AAIDwarfController::SetPawn(APawn *inPawn)
 {
 	Super::SetPawn(inPawn);
 	MyDwarf = Cast<ADwarfCharacter>(inPawn);
-	UE_LOG(LogTemp, Warning, TEXT("Ran OnPossess"));
 }
 
 void AAIDwarfController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
@@ -59,12 +60,20 @@ void AAIDwarfController::SetCurrentState(EAIDwarfState NewState)
 
 void AAIDwarfController::HandleNewState(EAIDwarfState NewState)
 {
-	if (NewState == EAIDwarfState::EChasePlayer)
+	if (MyDwarf)
 	{
-		ATopDownShmupCharacter* PlayerCharacter = Cast<ATopDownShmupCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-		if (PlayerCharacter)
+		MyDwarf->StopAttack();
+		if (NewState == EAIDwarfState::EChasePlayer)
 		{
-			MoveToActor(PlayerCharacter);
+			ATopDownShmupCharacter* PlayerCharacter = Cast<ATopDownShmupCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+			if (PlayerCharacter)
+			{
+				MoveToActor(PlayerCharacter);
+			}
+		}
+		else if (NewState == EAIDwarfState::EAttackPlayer)
+		{
+			MyDwarf->StartAttack();
 		}
 	}
 }

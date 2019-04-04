@@ -1,11 +1,13 @@
  // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AssaultWeapon.h"
+#include "DwarfCharacter.h"
 
 AAssaultWeapon::AAssaultWeapon()
 {
 	FireRate = 0.05f;
 	WeaponRange = 1000.0f;
+	DMG = 2;
 }
 
 void AAssaultWeapon::OnStartFire()
@@ -49,11 +51,13 @@ void AAssaultWeapon::WeaponTrace()
 	// Did this hit anything?
 	if (Hit.bBlockingHit)
 	{
-		// TODO: The arguments of this function are frustrating since the overloaded functions aren't
-		// appearing on my version of Visual Studio, but they should be. The API also doesn't mention
-		// what values are "defaulted" if not specified as parameters. I had this issue previously as
-		// well with the SpawnEmitterAttached function in the AWeapon class.
+		
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffects, FVector(Hit.Location.X, Hit.Location.Y, Hit.Location.Z));
 		UE_LOG(LogTemp, Warning, TEXT("TraceHit"));
+		ADwarfCharacter* Dwarf = Cast<ADwarfCharacter>(Hit.GetActor());
+		if (Dwarf)
+		{
+			Dwarf->TakeDamage(DMG, FDamageEvent(), GetInstigatorController(), this);
+		}
 	}
 }
