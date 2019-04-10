@@ -61,7 +61,7 @@ float ADwarfCharacter::TakeDamage(float Damage, struct FDamageEvent const& Damag
 			Cast<AAIDwarfController>(GetController())->UnPossess();
 			StopAttack();
 			float DeathCountdown = PlayAnimMontage(DeathAnim);
-			GetWorldTimerManager().SetTimer(DeathTimer, this, &ADwarfCharacter::Kill, DeathCountdown, false, DeathCountdown);
+			GetWorldTimerManager().SetTimer(DeathTimer, this, &ADwarfCharacter::Kill, DeathCountdown, false, 0.75f);
 			UE_LOG(LogTemp, Warning, TEXT("Dorf Dead"));
 		}
 	}

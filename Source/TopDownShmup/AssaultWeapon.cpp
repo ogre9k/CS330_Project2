@@ -12,7 +12,7 @@ AAssaultWeapon::AAssaultWeapon()
 
 void AAssaultWeapon::OnStartFire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Ran trace"));
+	//UE_LOG(LogTemp, Warning, TEXT("Ran trace"));
 	GetWorldTimerManager().SetTimer(FireTimer, this, &AAssaultWeapon::WeaponTrace, FireRate, true, 0.0f);
 	Super::OnStartFire();
 }
@@ -53,7 +53,7 @@ void AAssaultWeapon::WeaponTrace()
 	{
 		
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffects, FVector(Hit.Location.X, Hit.Location.Y, Hit.Location.Z));
-		UE_LOG(LogTemp, Warning, TEXT("TraceHit"));
+		//UE_LOG(LogTemp, Warning, TEXT("TraceHit"));
 		ADwarfCharacter* Dwarf = Cast<ADwarfCharacter>(Hit.GetActor());
 		if (Dwarf)
 		{
