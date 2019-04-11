@@ -6,7 +6,7 @@
 
 AAssaultWeapon::AAssaultWeapon()
 {
-	FireRate = 0.05f;
+	FireRate = 0.25f;
 	WeaponRange = 1000.0f;
 	DMG = 2;
 }
@@ -50,6 +50,7 @@ void AAssaultWeapon::WeaponTrace()
 		FCollisionObjectQueryParams::AllObjects, TraceParams);
 
 	// Did this hit anything?
+	/*
 	if (Hit.bBlockingHit)
 	{
 		
@@ -61,6 +62,7 @@ void AAssaultWeapon::WeaponTrace()
 			Dwarf->TakeDamage(DMG, FDamageEvent(), GetInstigatorController(), this);
 		}
 	}
+	*/
 
 	//Shoot bullet
 	if (Bullet != NULL)
@@ -68,14 +70,15 @@ void AAssaultWeapon::WeaponTrace()
 		UWorld* const World = GetWorld();
 		if (World)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Spawn!"));
+			//UE_LOG(LogTemp, Warning, TEXT("Spawn!"));
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = Instigator;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			SpawnParams.Owner = this;
 
 			ATopDownShmupCharacter* PlayerCharacter = Cast<ATopDownShmupCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-			FVector SpawnLocation = PlayerCharacter->GetActorLocation();
+			FVector SpawnLocation = StartPos;
 
 
 			World->SpawnActor<AFlyingBullet>(Bullet, SpawnLocation, FRotator(0.0f, 0.0f, 0.0f), SpawnParams);
