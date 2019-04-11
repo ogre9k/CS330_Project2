@@ -2,6 +2,7 @@
 
 #include "AssaultWeapon.h"
 #include "DwarfCharacter.h"
+#include "TopDownShmupCharacter.h"
 
 AAssaultWeapon::AAssaultWeapon()
 {
@@ -58,6 +59,26 @@ void AAssaultWeapon::WeaponTrace()
 		if (Dwarf)
 		{
 			Dwarf->TakeDamage(DMG, FDamageEvent(), GetInstigatorController(), this);
+		}
+	}
+
+	//Shoot bullet
+	if (Bullet != NULL)
+	{
+		UWorld* const World = GetWorld();
+		if (World)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spawn!"));
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = Instigator;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			ATopDownShmupCharacter* PlayerCharacter = Cast<ATopDownShmupCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+			FVector SpawnLocation = PlayerCharacter->GetActorLocation();
+
+
+			World->SpawnActor<AFlyingBullet>(Bullet, SpawnLocation, FRotator(0.0f, 0.0f, 0.0f), SpawnParams);
 		}
 	}
 }

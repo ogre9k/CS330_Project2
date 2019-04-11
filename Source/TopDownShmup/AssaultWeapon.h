@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon.h"
+#include "FlyingBullet.h"
 #include "AssaultWeapon.generated.h"
 
 /**
@@ -26,6 +27,9 @@ protected:
 	UParticleSystem* HitEffects;
 	FTimerHandle FireTimer;
 	void WeaponTrace();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Stats")
+	TSubclassOf<class AFlyingBullet> Bullet;
 
 public:
 };
